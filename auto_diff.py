@@ -1,3 +1,5 @@
+import math
+
 class Value:
     def __init__(self, value, operator=None, dependencies=[], power = 0):
         self.value = value
@@ -28,6 +30,12 @@ class Value:
             self.dependencies[1].grad += (-self.dependencies[0].value/self.dependencies[1].value**2) * self.grad
         elif self.operator == '^':
             self.dependencies[0].grad += self.power * (self.dependencies[0].value ** (self.power - 1)) * self.grad
+        elif self.operator == 'relu':
+            self.dependencies[0].grad += self.grad if self.dependencies[0].value > 0 else 0
+        elif self.operator == 'sigmoid':
+            # Derivative of the sigmoid function
+            # https://math.stackexchange.com/a/1225116
+            self.dependencies[0].grad += (1 / (1 + math.exp(-self.dependencies[0].value))) * (1 - 1 / (1 + math.exp(-self.dependencies[0].value))) * self.grad
     
     def __add__(self, x):
         return Value(self.value + x.value, '+', [self, x])
@@ -40,6 +48,12 @@ class Value:
 
     def __truediv__(self, x):
         return Value(self.value / x.value, '/', [self, x])
+    
+    def relu(self):
+        return Value(max(0, self.value), 'relu', [self])
+
+    def sigmoid(self):
+        return Value(1 / (1 + math.exp(-self.value)), 'sigmoid', [self])
 
     def dfs(self, topsort):
         self.vis = True
