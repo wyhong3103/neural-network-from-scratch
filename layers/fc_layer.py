@@ -36,6 +36,24 @@ class FC_Layer:
             for i in self.a:
                 i = i.sigmoid()
     
+    def get_w_grad(self):
+        return np.array(
+            [
+                [j.grad for j in i]
+                for i in self.w
+            ]
+        )
+
+    def get_b_grad(self):
+        return np.array(
+            [i.grad for i in self.b]
+        )
+
+    def get_a(self):
+        return np.array(
+            [i.value for i in self.a]
+        )
+    
     def learn(self, w_grad, b_grad, learning_rate):
         for i in range(len(self.w)):
             for j in range(len(self.w[i])):
