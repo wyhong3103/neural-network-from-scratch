@@ -49,6 +49,9 @@ class Value:
     def __truediv__(self, x):
         return Value(self.value / x.value, '/', [self, x])
     
+    def __pow__(self ,x):
+        return Value(self.value**x, '^', [self], x)
+    
     def relu(self):
         return Value(max(0, self.value), 'relu', [self])
 
@@ -96,6 +99,15 @@ y.backward()
 a = Value(2)
 b = Value(3)
 y = a / b
+
+y.backward()
+"""
+
+"""
+# Simple equation 3
+
+a = Value(2)
+y = a**3
 
 y.backward()
 """
