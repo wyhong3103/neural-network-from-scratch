@@ -27,7 +27,7 @@ class Value:
             self.dependencies[0].grad += (1/self.dependencies[1].value) * self.grad
             self.dependencies[1].grad += (-self.dependencies[0].value/self.dependencies[1].value**2) * self.grad
         elif self.operator == '^':
-            self.dependencies[0].grad += self.power * self.dependencies[0].value * self.grad
+            self.dependencies[0].grad += self.power * (self.dependencies[0].value ** (self.power - 1)) * self.grad
     
     def __add__(self, x):
         return Value(self.value + x.value, '+', [self, x])
@@ -38,7 +38,7 @@ class Value:
     def __mul__(self, x):
         return Value(self.value * x.value, '*', [self, x])
 
-    def __div__(self, x):
+    def __truediv__(self, x):
         return Value(self.value / x.value, '/', [self, x])
 
     def dfs(self, topsort):
@@ -50,7 +50,12 @@ class Value:
 
     def backward(self):
         topsort = []
+        # Run a DFS from the result node, generate the topological order
+        # Run backprop from the topological order
         self.dfs(topsort)
+
+        # A reverse topological order of a graph is equivalent to the topological order of the graph with reverse edges
+        # Proof: https://qr.ae/pKV2Zn
         topsort = topsort[::-1]
 
         self.grad = 1
@@ -59,7 +64,7 @@ class Value:
 
 
 """
-# Testing auto differentiation
+# Simple equation 1
 
 a = Value(2)
 b = Value(3)
@@ -69,11 +74,50 @@ e = a * b
 y = e * c + e * d
 
 y.backward()
+"""
 
-print(f"a = {a.grad}")
-print(f"b = {b.grad}")
-print(f"c = {c.grad}")
-print(f"d = {d.grad}")
-print(f"e = {e.grad}")
-print(f"y = {y.grad}")
+"""
+# Simple equation 2
+
+a = Value(2)
+b = Value(3)
+y = a / b
+
+y.backward()
+"""
+
+"""
+# Simple neural network
+
+x = Value(2)
+w = [
+    [
+        [Value(2)]
+    ],
+    [
+        [Value(3)],
+        [Value(4)]
+    ],
+    [
+        [Value(10), Value(11)]
+    ]
+]
+b = [
+    [Value(10)],
+    [Value(-5), Value(-3)],
+    [Value(3)]
+]
+
+a = [
+    [None],
+    [None, None],
+    [None]
+]
+
+a[0][0] = w[0][0][0] * x + b[0][0]
+a[1][0] = w[1][0][0] * a[0][0] + b[1][0]
+a[1][1] = w[1][1][0] * a[0][0] + b[1][1]
+a[2][0] = w[2][0][0] * a[1][0] + w[2][0][1] * a[1][1] + b[2][0]
+
+a[2][0].backward()
 """
