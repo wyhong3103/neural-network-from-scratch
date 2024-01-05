@@ -29,6 +29,12 @@ class FC_Layer:
     
     def forward_prop(self, prev_layer):
         self.a = self.w @ prev_layer.a + self.b
+        if (self.activation == 'relu'):
+            for i in self.a:
+                i = i.relu()
+        elif (self.activation == 'sigmoid'):
+            for i in self.a:
+                i = i.sigmoid()
     
     def learn(self, learning_rate):
         for i in self.w:
