@@ -36,10 +36,10 @@ class FC_Layer:
             for i in self.a:
                 i = i.sigmoid()
     
-    def learn(self, learning_rate):
-        for i in self.w:
-            for j in i:
-                j.value -= learning_rate * j.grad
+    def learn(self, w_grad, b_grad, learning_rate):
+        for i in range(len(self.w)):
+            for j in range(len(self.w[i])):
+                self.w[i][j].value -= learning_rate * w_grad[i][j]
     
-        for i in self.b:
-            i.value -= learning_rate * i.grad
+        for i in range(len(self.b)):
+            self.b[i].value -= learning_rate * b_grad[i]
