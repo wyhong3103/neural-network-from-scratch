@@ -45,6 +45,10 @@ for _ in range(100):
 nn.predict(X)
 ```
 
+## Binary Handwritten Digit Classification Example
+
+I also tried using the neural network to recognize handwritten digits 1 and 0. The jupyter notebook can be found [here](https://github.com/wyhong3103/neural-network-from-scratch/blob/main/binary-handwritten-digit-classification.ipynb).
+
 ## References
 
 - [Neural Network Playlist - 3Blue1Brown](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) 
